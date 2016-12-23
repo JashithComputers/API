@@ -51,7 +51,7 @@ var JCL_firebase = {
 		getPhotoURL:function(){
 			var user = firebase.auth().currentUser;
 			return user ? user.photoURL : null;
-		}
+		},
 		createUserWithEmailAndPassword:function(email, password, errorFn)
 		{
 			firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
@@ -103,6 +103,7 @@ var JCL_firebase = {
 		},
 		onAuthStateChanged:function(callback)
 		{
+			var th = this;
 			firebase.auth().onAuthStateChanged(function(user) {
 				if(user)
 				{
@@ -114,6 +115,22 @@ var JCL_firebase = {
 					}
 				}
 				if(typeof(callback)=="function") callback(user);
+				
+				//store all user data
+				if(user)
+				{
+					var lastActiveOn = new Date();
+					var userData = {
+							email: user.email
+							, name: user.displayName
+							, photoURL: user.photoURL
+							, emailVerified: user.emailVerified
+							, lastActiveOn : lastActiveOn
+					};
+					firebase.database().ref('admin/users/' + user.uid ).update(userData);
+					firebase.database().ref(th.getDomain() + '/users/' + user.uid ).update({lastActiveOn:lastActiveOn});
+					console.log("user data updated");
+				}
 			});
 		},
 		signInWithPopup:function(provider, successFn, errorFn){

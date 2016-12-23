@@ -112,7 +112,7 @@ function showWishlist(){
 		{
 			console.log("fetching...");
 			var userId = JCL_firebase.getUID();
-			var ref = firebase.database().ref(JCL_firebase.getDomain() + '/users/' + userId + "/wishlist");
+			var ref = JCL_firebase.getDatabase().ref(JCL_firebase.getDomain() + '/users/' + userId + "/wishlist");
 
 			ref.once('value', function(snapshot) {
 				  console.log(snapshot);
@@ -133,6 +133,16 @@ function showWishlist(){
 			});
 		}
 		
+	});
+}
+
+function subscribeToNewsletter(){
+	$(document).ready(function(){
+		var emailStr = "test1@jashithcomputers.in";
+		var email = btoa(emailStr);
+		var ref = JCL_firebase.getDatabase().ref("service/newsletter/"+JCL_firebase.getDomain() + "/"+email ).set({
+			email:emailStr
+		});
 	});
 }
 
@@ -158,6 +168,8 @@ $(document).ready(function(){
 <button onclick="addProduct();">Add Product</button>
 
 <button onclick="showWishlist();">Show wishlist</button>
+
+<button onclick="subscribeToNewsletter();">subscribeToNewsletter</button>
 
 </body>
 </html>
