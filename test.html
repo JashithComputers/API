@@ -20,6 +20,7 @@
   // Get a reference to the database service
   var database = firebase.database();
   
+  var DB_DOMAIN = "denimengland-com";
   var email = "vijayakumar.moorthy@gmail.com";
   var password = "test!234";
   
@@ -90,9 +91,12 @@
   {
 	  var p = "p_"+new Date();
 	  var userId = firebase.auth().currentUser.uid;
-	  firebase.database().ref('users/' + userId + "/wishlish").set({
-		    products: p
-		  });
+	  var wishlistKey = firebase.database().ref(DB_DOMAIN + '/users/' + userId + "/wishlist").push();
+	  wishlistKey.set({
+		 p : p
+	  });
+	  
+	  
   }
   
   function sendVerifcation()
@@ -180,6 +184,24 @@
 		});
   }
   
+  function showWishlist()
+  {
+	  var userId = firebase.auth().currentUser.uid;
+	  var ref = firebase.database().ref(DB_DOMAIN + '/users/' + userId + "/wishlist");
+	  
+	  ref.once('value', function(snapshot) {
+		  console.log(snapshot);
+		  snapshot.forEach(function(childSnapshot) {
+			  console.log(childSnapshot);
+			  var childKey = childSnapshot.getKey();
+			  var childData = childSnapshot.val();
+			  console.log(childKey);
+			  console.log(childData);
+		  });
+		});
+  }
+  
+  
   
 </script>
 </head>
@@ -198,6 +220,8 @@
 <button onclick="googleLogin();">Google Login</button>
 
 <button onclick="facebookLogin();">Facebook Login</button>
+
+<button onclick="showWishlist();">Show wishlist</button>
 
 </body>
 </html>
