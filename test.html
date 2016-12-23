@@ -21,7 +21,7 @@
   var database = firebase.database();
   
   var email = "vijayakumar.moorthy@gmail.com";
-  var password = "admin!234";
+  var password = "test!234";
   
   var anonUser;
 
@@ -95,6 +95,44 @@
 		  });
   }
   
+  function sendVerifcation()
+  {
+	  var user = firebase.auth().currentUser;
+
+	  user.sendEmailVerification().then(function() {
+	    // Email sent.
+	  }, function(error) {
+	    // An error happened.
+	  });
+  }
+  
+  function resetPassword()
+  {
+	  var auth = firebase.auth();
+	  
+	  auth.sendPasswordResetEmail(email).then(function() {
+	    // Email sent.
+	  }, function(error) {
+	    // An error happened.
+	  });
+  }
+  
+  
+  
+  firebase.auth().onAuthStateChanged(function(user) {
+	  if(user)
+	{
+		  if (user.emailVerified) {
+			    console.log('Email is verified');
+			  }
+			  else {
+			    console.log('Email is not verified');
+			  }
+	}
+	  
+	  
+	});
+  
 </script>
 </head>
 <body>
@@ -105,6 +143,9 @@
 <button onclick="Login();">Login</button>
 <button onclick="link();">Link</button>
 <button onclick="addProduct();">Add Product</button>
+
+<button onclick="sendVerifcation();">send Verifcation</button>
+<button onclick="resetPassword();">reset Password</button>
 
 </body>
 </html>
