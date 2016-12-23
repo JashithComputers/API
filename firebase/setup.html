@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Jashith computers</title>
+<!-- jQuery library (served from Google) -->
+<script src='//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js'></script>
+<script src='https://www.gstatic.com/firebasejs/3.6.2/firebase.js'></script>
+<script src='https://www.gstatic.com/firebasejs/3.6.2/firebase-app.js'></script>
+<script src='https://www.gstatic.com/firebasejs/3.6.2/firebase-auth.js'></script>
+<script src='https://www.gstatic.com/firebasejs/3.6.2/firebase-database.js'></script>
+<script src='firebase.lib.js'></script>
+
+<script>
+JCL_firebase.setup({
+	DB_DOMAIN:"denimengland-com"
+	});
+console.log(JCL_firebase);
+</script>
+
+</head>
+<body>
+
+<script>
+
+$(document).ready(function(){
+	console.log(JCL_firebase.is_auth());	
+});
+
+function signout(){
+	$(document).ready(function(){
+		JCL_firebase.signOut(function(){console.log("test signout")});
+	});
+}
+
+function CreateUser(){
+	$(document).ready(function(){
+		JCL_firebase.createUserWithEmailAndPassword("vijay@jashithcomputers.in","test!234",function(error){
+			console.log(error)
+		});
+	});
+}
+
+function Login(){
+	$(document).ready(function(){
+		JCL_firebase.signInWithEmailAndPassword("vijay@jashithcomputers.in","test!234",function(error){
+			console.log(error)
+		});
+	});
+}
+
+function sendVerifcation(){
+	$(document).ready(function(){
+		if(JCL_firebase.is_auth())
+			JCL_firebase.sendEmailVerification();
+	});
+}
+
+function resetPassword(){
+	$(document).ready(function(){
+		JCL_firebase.sendPasswordResetEmail("vijayakumar.moorthy@gmail.com");
+	});
+}
+
+
+function googleLogin(){
+	$(document).ready(function(){
+		JCL_firebase.googleLogin(function(user){
+			console.log(user);
+		},function(error){
+			console.log(error);
+		});
+	});
+}
+
+
+function facebookLogin(){
+	$(document).ready(function(){
+		JCL_firebase.facebookLogin(function(user){
+			console.log(user);
+		},function(error){
+			console.log(error);
+		});
+	});
+}
+
+
+
+function addProduct(){
+	$(document).ready(function(){
+		if(JCL_firebase.is_auth())
+		{
+			var p = "p_"+new Date();
+			var userId = firebase.auth().currentUser.uid;
+			var wishlistKey = JCL_firebase.getDatabase().ref(JCL_firebase.getDomain() + '/users/' + JCL_firebase.getUID() + "/wishlist").push();
+			wishlistKey.set({p : p});
+			console.log("added");
+		}
+		else{
+			JCL_firebase.googleLogin(function(user){
+				addProduct();
+			},function(error){
+				console.log(error);
+			});
+		}
+	});
+}
+
+function showWishlist(){
+	$(document).ready(function(){
+		if(JCL_firebase.is_auth())
+		{
+			console.log("fetching...");
+			var userId = JCL_firebase.getUID();
+			var ref = firebase.database().ref(JCL_firebase.getDomain() + '/users/' + userId + "/wishlist");
+
+			ref.once('value', function(snapshot) {
+				  console.log(snapshot);
+				  snapshot.forEach(function(childSnapshot) {
+					  console.log(childSnapshot);
+					  var childKey = childSnapshot.getKey();
+					  var childData = childSnapshot.val();
+					  console.log(childKey);
+					  console.log(childData);
+				  });
+			});
+		}
+		else{
+			JCL_firebase.googleLogin(function(user){
+				addProduct();
+			},function(error){
+				console.log(error);
+			});
+		}
+		
+	});
+}
+
+$(document).ready(function(){
+	JCL_firebase.onAuthStateChanged(function(user){
+		console.log(user);
+	});
+});
+
+</script>
+
+<button onclick="signout();">Sign out</button>
+<button onclick="CreateUser();">Create User</button>
+<button onclick="Login();">Login</button>
+
+<button onclick="sendVerifcation();">send Verifcation</button>
+<button onclick="resetPassword();">reset Password</button>
+
+<button onclick="googleLogin();">Google Login</button>
+
+<button onclick="facebookLogin();">Facebook Login</button>
+
+<button onclick="addProduct();">Add Product</button>
+
+<button onclick="showWishlist();">Show wishlist</button>
+
+</body>
+</html>
