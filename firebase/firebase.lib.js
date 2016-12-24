@@ -101,6 +101,24 @@ var JCL_firebase = {
 				if(typeof(error)=="function") error(error);
 			});
 		},
+		_logUserData:function(user){
+			var th = this;
+			//store all user data
+			if(user)
+			{
+				var lastActiveOn = new Date();
+				var userData = {
+						email: user.email
+						, name: user.displayName
+						, photoURL: user.photoURL
+						, emailVerified: user.emailVerified
+						, lastActiveOn : lastActiveOn
+				};
+				firebase.database().ref('admin/users/' + user.uid ).update(userData);
+				firebase.database().ref(th.getDomain() + '/users/' + user.uid ).update({lastActiveOn:lastActiveOn});
+				console.log("user data updated");
+			}
+		},
 		onAuthStateChanged:function(callback)
 		{
 			var th = this;
@@ -116,21 +134,7 @@ var JCL_firebase = {
 				}
 				if(typeof(callback)=="function") callback(user);
 				
-				//store all user data
-				if(user)
-				{
-					var lastActiveOn = new Date();
-					var userData = {
-							email: user.email
-							, name: user.displayName
-							, photoURL: user.photoURL
-							, emailVerified: user.emailVerified
-							, lastActiveOn : lastActiveOn
-					};
-					firebase.database().ref('admin/users/' + user.uid ).update(userData);
-					firebase.database().ref(th.getDomain() + '/users/' + user.uid ).update({lastActiveOn:lastActiveOn});
-					console.log("user data updated");
-				}
+				th._logUserData(user);
 			});
 		},
 		signInWithPopup:function(provider, successFn, errorFn){
