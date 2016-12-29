@@ -13,9 +13,9 @@ var JCL_firebase = {
 			$(document).ready(function(){
 				// Initialize Firebase
 				var config = {
-						apiKey: "AIzaSyAOOe1uvfZ79LW93w65Dv6L9JWqDYVaN4A",
-						authDomain: "jashith-computers.firebaseapp.com",
-						databaseURL: "https://jashith-computers.firebaseio.com"
+						apiKey: "AIzaSyC7HKIqUPL6RmhLSVAfsHv0Gh1zYKKOM7I",
+						authDomain: "jashith-free-app.firebaseapp.com",
+						databaseURL: "https://jashith-free-app.firebaseio.com/"
 				};
 				firebase.initializeApp(config);
 			});
